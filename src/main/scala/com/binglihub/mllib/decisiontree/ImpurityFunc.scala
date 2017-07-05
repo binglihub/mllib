@@ -10,8 +10,8 @@ object ImpurityFunc {
     * @param p an array contains probability values
     * @return a Some(double) value represents the entropy value, None for wrong input
     */
-  def entropy(p: Array[Double]): Option[Double] =
-    if (p == null || p.length == 0) None
+  def entropy(p: Iterable[Double]): Option[Double] =
+    if (p == null || p.size == 0) None
     else Some(p.foldLeft(0.0)({
       case (b, x) =>
         if(x<0.00000001) b
