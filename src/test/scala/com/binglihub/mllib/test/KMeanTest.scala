@@ -1,7 +1,7 @@
 package com.binglihub.mllib.test
 
 import org.scalatest.{FlatSpec, Matchers}
-import com.binglihub.mllib.kmeans.KMeans._
+import com.binglihub.mllib.kmeans.DistanceFunc._
 
 /**
   * KMeans test functions

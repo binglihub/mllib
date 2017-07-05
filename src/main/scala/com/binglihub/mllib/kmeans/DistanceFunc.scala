@@ -3,7 +3,7 @@ package com.binglihub.mllib.kmeans
 /**
   * This object contains KMeans functions
   */
-object KMeans {
+object DistanceFunc {
   /**
     * Euclidean distance function
     * @param a vector a
