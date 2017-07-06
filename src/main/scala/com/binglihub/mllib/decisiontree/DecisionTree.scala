@@ -1,15 +1,35 @@
 package com.binglihub.mllib.decisiontree
 
+
 object DecisionTree {
 
   def id3[T](impurity: (Iterable[Double]) => Option[Double], data: Array[Array[T]]): Option[Node[T]] =
     if (data == null || data.length == 0 || data(0).length == 0) None
     else {
 
-      (0 until data(0).length - 1).map(x=>{
-        GainFunc.gain(data.map(y=>(y(x),y.last)))(impurity)
-      }).foreach(println)
-      None
+      def find(used:List[Int],dep:Int,maxDep:Int,d:Array[Array[T]]):Node[T]={
+
+        val index = (0 until d(0).length - 1)
+          .filter(!used.contains(_))
+          .map(x=>{x->GainFunc.gain(d.map(y=>(y(x),y.last)))(impurity)})
+          .maxBy(_._2.get)._1
+
+        val values = d.map(_(index)).groupBy(x=>x).map(_._1) //d.map(_(index)).groupBy(_).map(_._1)
+        var children = Map[T,Node[T]]()
+
+        values.foreach(x=>{
+          val subset = d.filter(_(index)==x)
+          val classes= subset.map(_.last).groupBy(x=>x)
+          if(classes.size==1) children += ((x, new Node[T](index,classes.last._2(0))))
+          else if (dep >= maxDep || used.size == d(0).length-2) children += ((x, new Node[T](index, classes.maxBy(_._2.size)._2(0))))
+          else children += ((x, find(index::used,dep+1,maxDep,subset)))
+        })
+
+        new Node[T](index,children)
+      }
+
+
+     Some(find(List[Int](),1,data(0).length-1,data))
     }
 
 }

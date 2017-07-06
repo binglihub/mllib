@@ -49,7 +49,9 @@ class DtreeTest extends FlatSpec with Matchers {
   }
 
   "The id3 function" should "works" in {
-    id3(entropy, data)
+    val t = id3(entropy, data)
+
+    t.get.predict(Array("sunny", "cool", "normal", "false")) should be ("yes")
   }
 
 }
