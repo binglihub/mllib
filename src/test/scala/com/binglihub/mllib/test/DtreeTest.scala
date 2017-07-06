@@ -1,5 +1,6 @@
 package com.binglihub.mllib.test
 
+import com.binglihub.mllib.decisiontree.DecisionTree
 import org.scalatest.{FlatSpec, Matchers}
 import com.binglihub.mllib.decisiontree.ImpurityFunc._
 import com.binglihub.mllib.decisiontree.GainFunc._
@@ -51,7 +52,13 @@ class DtreeTest extends FlatSpec with Matchers {
   "The id3 function" should "works" in {
     val t = id3(entropy, data)
 
-    t.get.predict(Array("sunny", "cool", "normal", "false")) should be ("yes")
+    t.get.predict(Array("sunny", "cool", "normal", "false")) should be("yes")
+  }
+
+  "DecisionTree class" should "works" in {
+    val dt = new DecisionTree[String](entropy, id3)
+    dt.train(data)
+    dt.predict(Array("overcast", "cool", "normal", "false")).get should be("yes")
   }
 
 }
