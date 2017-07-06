@@ -2,9 +2,15 @@ package com.binglihub.mllib.decisiontree
 
 object DecisionTree {
 
-  def id3[T <: AnyVal](impurity: (Iterable[Double]) => Option[Double], data: Array[Array[T]]): Node[T] = {
-    null
-  }
+  def id3[T](impurity: (Iterable[Double]) => Option[Double], data: Array[Array[T]]): Option[Node[T]] =
+    if (data == null || data.length == 0 || data(0).length == 0) None
+    else {
+
+      (0 until data(0).length - 1).map(x=>{
+        GainFunc.gain(data.map(y=>(y(x),y.last)))(impurity)
+      }).foreach(println)
+      None
+    }
 
 }
 
@@ -17,7 +23,7 @@ object DecisionTree {
   */
 class DecisionTree[T](
                        val impurity: (Iterable[Double]) => Option[Double],
-                       val decisionTreeFunc: ((Iterable[Double]) => Option[Double], Array[Array[T]]) => Node[T]
+                       val decisionTreeFunc: ((Iterable[Double]) => Option[Double], Array[Array[T]]) => Option[Node[T]]
                      ) {
   private var root: Node[T] = null
 
@@ -32,7 +38,7 @@ class DecisionTree[T](
     * @param data the training data
     */
   def train(data: Array[Array[T]]): Unit = {
-    root = decisionTreeFunc(impurity, data)
+    root = decisionTreeFunc(impurity, data).get
   }
 
   /**
@@ -53,19 +59,22 @@ class DecisionTree[T](
   *
   * @param index    the index of feature
   * @param isLeaf   true is this is a leaf, false otherwise
-  * @param decision the decision
   * @param children a list of children nodes
   * @tparam T the type of data
   */
-private case class Node[T <: AnyVal](val index: Int, val isLeaf: Boolean, val decision: T, val children: Map[T, Node[T]]) {
+case class Node[T](val index: Int, val isLeaf: Boolean, val children: Map[T, Node[T]]) {
 
+  private var decision:T = _
   /**
     * The constructor for the leaf nodes
     *
     * @param index    the index of feature
     * @param decision the decision
     */
-  def this(index: Int, decision: T) = this(index, true, decision, null)
+  def this(index: Int, decision: T) = {
+    this(index, true, null)
+    this.decision = decision
+  }
 
   /**
     * The constructor for the non-leaf nodes
@@ -73,7 +82,7 @@ private case class Node[T <: AnyVal](val index: Int, val isLeaf: Boolean, val de
     * @param index    the index of feature
     * @param children the list of children nodes
     */
-  def this(index: Int, children: Map[T, Node[T]]) = this(index, false, _, children)
+  def this(index: Int, children: Map[T, Node[T]]) = this(index, false, children)
 
   /**
     * make a decision
