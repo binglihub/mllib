@@ -1,5 +1,7 @@
 package com.binglihub.mllib.decisiontree
 
+import com.binglihub.mllib.util.Classification
+
 
 object DecisionTree {
 
@@ -51,7 +53,7 @@ object DecisionTree {
 class DecisionTree[T](
                        val impurity: (Iterable[Double]) => Option[Double],
                        val decisionTreeFunc: ((Iterable[Double]) => Option[Double], Array[Array[T]]) => Option[Node[T]]
-                     ) {
+                     ) extends Classification[T]{
   private var root: Node[T] = null
 
   /**
@@ -64,7 +66,7 @@ class DecisionTree[T](
     *
     * @param data the training data
     */
-  def train(data: Array[Array[T]]): Unit = {
+  override def train(data: Array[Array[T]]): Unit = {
     root = decisionTreeFunc(impurity, data).get
   }
 
@@ -74,7 +76,7 @@ class DecisionTree[T](
     * @param record an array contains a record
     * @return the decision result
     */
-  def predict(record: Array[T]): Option[T] =
+  override def predict(record: Array[T]): Option[T] =
     if (root == null) None
     else Some(root.predict(record))
 
