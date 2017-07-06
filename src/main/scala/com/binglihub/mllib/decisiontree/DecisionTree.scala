@@ -1,10 +1,50 @@
 package com.binglihub.mllib.decisiontree
 
+object DecisionTree {
+
+  def id3[T <: AnyVal](impurity: (Iterable[Double]) => Option[Double], data: Array[Array[T]]): Node[T] = {
+    null
+  }
+
+}
 
 /**
-  * Created by bing on 7/5/17.
+  * This class contains the decision tree information
+  *
+  * @param impurity         the impurity function
+  * @param decisionTreeFunc the decision tree function
+  * @tparam T the type of data
   */
-class DecisionTree {
+class DecisionTree[T](
+                       val impurity: (Iterable[Double]) => Option[Double],
+                       val decisionTreeFunc: ((Iterable[Double]) => Option[Double], Array[Array[T]]) => Node[T]
+                     ) {
+  private var root: Node[T] = null
+
+  /**
+    * the short constructor
+    */
+  def this() = this(ImpurityFunc.entropy, DecisionTree.id3)
+
+  /**
+    * build a new decision tree
+    *
+    * @param data the training data
+    */
+  def train(data: Array[Array[T]]): Unit = {
+    root = decisionTreeFunc(impurity, data)
+  }
+
+  /**
+    * make a decision
+    *
+    * @param record an array contains a record
+    * @return the decision result
+    */
+  def predict(record: Array[T]): Option[T] =
+    if (root == null) None
+    else Some(root.predict(record))
+
 
 }
 
@@ -36,7 +76,8 @@ private case class Node[T <: AnyVal](val index: Int, val isLeaf: Boolean, val de
   def this(index: Int, children: Map[T, Node[T]]) = this(index, false, _, children)
 
   /**
-    * make decision
+    * make a decision
+    *
     * @param record an array contains a record
     * @return the decision result
     */
