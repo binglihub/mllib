@@ -3,6 +3,13 @@ package com.binglihub.mllib.decisiontree
 
 object DecisionTree {
 
+  /**
+    * This is the id3 model
+    * @param impurity the impurity function
+    * @param data an 2d array contains the data
+    * @tparam T the type of data
+    * @return a node in the tree
+    */
   def id3[T](impurity: (Iterable[Double]) => Option[Double], data: Array[Array[T]]): Option[Node[T]] =
     if (data == null || data.length == 0 || data(0).length == 0) None
     else {
